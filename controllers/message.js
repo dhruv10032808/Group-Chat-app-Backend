@@ -6,3 +6,11 @@ exports.postmessage=(req,res,next)=>{
         res.status(201).json(result);
     })
 }
+
+exports.getmessage=(req,res,next)=>{
+    Message.findAll({where:{userId:req.user.id}}).then(result=>{
+        res.status(201).json(result);
+    }).catch(err=>{
+        res.status(400).json({success:false,message:'Something went wrong'})
+    })
+}
