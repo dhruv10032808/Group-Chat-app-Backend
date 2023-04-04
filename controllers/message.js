@@ -1,28 +1,31 @@
 const Message=require('../models/message');
-const Sequelize=require('sequelize');
+const {Sequelize,Op}=require('sequelize');
+const User = require('../models/user');
 const {gt, lte, ne, in: opIn} = Sequelize.Op;
 
 exports.postmessage=(req,res,next)=>{
+    const groupid=req.query.gid
     console.log(req.body.message);
-    Message.create({message:req.body.message,userId:req.user.id}).then(result=>{
+    Message.create({message:req.body.message,userId:req.user.id,groupId:groupid}).then(result=>{
         res.status(201).json(result);
     })
 }
 
 exports.getmessage=(req,res,next)=>{
     var lastid=req.params.lastmsgid;
-    console.log(lastid)
     if(lastid==="undefined"){
-        lastid=1;
+        lastid=0;
     }
-    console.log(lastid==="undefined");
-    Message.findAll({ where: {
-        id:
+    Message.findAll({
+        attributes:['message','id'],
+        include:[
         {
-            [gt]: lastid
+            model:User,
+            attributes:['name']
         }
-      }
-    }).then(result=>{
+    ],
+    where:{id:{[Op.gt]:lastid}}
+      }).then(result=>{
         res.status(201).json({message:result});
     }).catch(err=>{
         res.status(400).json({success:false,message:'Something went wrong'})
