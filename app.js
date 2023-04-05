@@ -10,6 +10,8 @@ const Message = require('./models/message');
 const Group = require('./models/group');
 const GroupUser = require('./models/usergroup');
 const Chatimage = require('./models/chatimage');
+const cron=require('node-cron');
+const ArchivedChat = require('./models/archivedChat');
 const app=express();
 app.use(cors({
     origin:'http://192.168.1.102:5500'
@@ -35,6 +37,26 @@ Chatimage.belongsTo(User);
 
 Group.belongsToMany(User,{through:GroupUser})
 User.belongsToMany(Group,{through:GroupUser})
+
+User.hasMany(ArchivedChat);
+ArchivedChat.belongsTo(User);
+
+Group.hasMany(ArchivedChat);
+ArchivedChat.belongsTo(Group);
+
+cron.schedule("0 0 * * *",function(){
+    Message.findAll().then(async(messages)=>{
+        await messages.forEach(message=>{
+            ArchivedChat.create({
+            message:message.message,
+            userId:message.userId,
+            groupId:message.groupId})
+        })
+        Message.findAll().destroy().then(()=>{
+            console.log('Deleted old messages successfully')
+        })
+    })
+})
 
 sequelize.sync().then(()=>{
     app.listen(3000);
