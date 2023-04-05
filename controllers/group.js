@@ -82,3 +82,41 @@ exports.joingroup=async (req,res)=>{
             res.json({message:"You are not admin of group to add members"})
           }
 }
+
+exports.getgroupuser=(req,res)=>{
+    const groupid=req.params.id
+    Group.findAll({
+        include:User,
+        where:{id:groupid}
+    }).then(users=>{
+        GroupUser.findOne({where:{userId:req.user.id,groupId:groupid}}).then(groupuser=>{
+            res.status(201).json({user:users,isadmin:groupuser.isadmin,success:true})
+        })
+    })
+}
+
+exports.removefromgroup=(req,res)=>{
+    const userId=req.params.userId;
+    const gid=req.params.gid;
+    GroupUser.findOne({
+        where:{userId:userId,groupId:gid}
+    }).then(user=>{
+        user.destroy().then(()=>{
+            res.status(201).json({message:'User deleted from group',success:true})
+        })
+    })
+}
+
+exports.makeadmin=(req,res)=>{
+    const userId=req.params.userId;
+    const gid=req.params.gid;
+    GroupUser.findOne({
+        where:{userId:userId,groupId:gid}
+    }).then(user=>{
+        user.update({
+            isadmin:true
+        }).then(()=>{
+            res.status(201).json({message:'The user is now admin',success:true})
+        })
+    })
+}

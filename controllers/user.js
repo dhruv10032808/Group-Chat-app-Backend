@@ -33,7 +33,7 @@ exports.signup=(req,res,next)=>{
                         throw new Error('Something went wrong');
                     }
                     if(result===true){
-                        res.status(200).json({success:true,message:'User logged in successfully',token:getAccessToken(users[0].id)})
+                        res.status(200).json({success:true,message:'User logged in successfully',token:getAccessToken(users[0].id),name:users[0].name})
                     }else{
                         return res.status(400).json({success:false,message:'Password is incorrect'})
                     }
