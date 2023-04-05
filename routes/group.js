@@ -9,5 +9,6 @@ router.post('/joingroup',userAuthentication.authenticate,groupController.joingro
 router.get(`/getgroupuser/:id`,userAuthentication.authenticate,groupController.getgroupuser)
 router.get('/removefromgroup/:userId/:gid',userAuthentication.authenticate,groupController.removefromgroup)
 router.get('/makeadmin/:userId/:gid',userAuthentication.authenticate,groupController.makeadmin)
+router.post('/chatimage',userAuthentication.authenticate,groupController.chatimage)
 
 module.exports=router;

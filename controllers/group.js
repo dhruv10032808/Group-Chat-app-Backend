@@ -1,3 +1,4 @@
+const Chatimage = require('../models/chatimage')
 const Group=require('../models/group')
 const Message = require('../models/message')
 const User = require('../models/user')
@@ -119,4 +120,16 @@ exports.makeadmin=(req,res)=>{
             res.status(201).json({message:'The user is now admin',success:true})
         })
     })
+}
+
+exports.chatimage=(req,res)=>{
+    const groupid=req.body.groupid;
+    const picture=req.body.picture;
+    Chatimage.create({
+        image:picture,
+        userId:req.user.id,
+        groupId:groupid
+    }).then(()=>{
+        res.status(201).json({message:'Image sent successfully'})
+    }).catch(err=>console.log(err))
 }

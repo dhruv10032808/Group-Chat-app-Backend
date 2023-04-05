@@ -9,6 +9,7 @@ const User = require('./models/user');
 const Message = require('./models/message');
 const Group = require('./models/group');
 const GroupUser = require('./models/usergroup');
+const Chatimage = require('./models/chatimage');
 const app=express();
 app.use(cors({
     origin:'http://192.168.1.102:5500'
@@ -24,6 +25,13 @@ Message.belongsTo(User);
 
 Group.hasMany(Message);
 Message.belongsTo(Group);
+
+Group.hasMany(Chatimage);
+Chatimage.belongsTo(Group);
+
+User.hasMany(Chatimage);
+Chatimage.belongsTo(User);
+
 
 Group.belongsToMany(User,{through:GroupUser})
 User.belongsToMany(Group,{through:GroupUser})
